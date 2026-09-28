@@ -1,5 +1,9 @@
 # [Learning-based Motion Artifact Removal Networks (LEARN) for Quantitative R2* Mapping](https://arxiv.org/abs/2109.01622)
 
+> **Modern PyTorch branch:** The maintained LEARN-IMG migration is documented
+> in [README_PYTORCH.md](README_PYTORCH.md). The original TensorFlow 1.x code
+> remains unchanged under `codes/` for scientific comparison.
+
 <!---
 [![Watch the video](https://github.com/xuxiaojian/2022-MRM-LEARN/blob/main/examples/gif.gif)](https://youtu.be/2DVl2lS-dbU)
 -->

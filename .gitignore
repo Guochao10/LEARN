@@ -8,3 +8,14 @@
 
 /**/*.pyc
 /**/__pycache__
+
+/.pytest_cache/
+/.venv/
+/build/
+/dist/
+/*.egg-info/
+
+*.pt
+*.pth
+*.ckpt
+*.h5

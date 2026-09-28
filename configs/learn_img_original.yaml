@@ -1,0 +1,52 @@
+# PyTorch reproduction of the original LEARN-IMG configuration.
+seed: 0
+deterministic: false
+output_dir: results/pytorch-learn-img
+
+model:
+  in_channels: 2
+  out_channels: 2
+  base_channels: 64
+  convs_per_level: 3
+  num_levels: 4
+  kernel_size: 3
+  output_relu: false
+  residual: false
+
+data:
+  root: data
+  mat_key: ima_comb
+  normalization: middle_slice_all_echoes
+  pad_width_190_to_192: true
+  cache_size: 2
+  slice_ranges:
+    60: [19, 50]
+    72: [24, 55]
+    88: [29, 60]
+    96: [34, 65]
+  splits:
+    train:
+      subjects: [subj_sim]
+      motion_pattern: "motion/{subject}/ima_comb_{subject}_nrand1-10_snr2d_mid*.mat"
+      truth_pattern: "truth/{subject}/ima_comb_{subject}.mat"
+    valid:
+      subjects: [subj_sim]
+      motion_pattern: "motion/{subject}/ima_comb_{subject}_nrand1-10_snr2d_mid*.mat"
+      truth_pattern: "truth/{subject}/ima_comb_{subject}.mat"
+    test:
+      subjects: [subj_exp]
+      motion_pattern: "motion/{subject}/ima_comb_{subject}.mat"
+      truth_pattern: "truth/{subject}/ima_comb_{subject}.mat"
+
+loader:
+  batch_size: 1
+  num_workers: 0
+  pin_memory: true
+  persistent_workers: false
+  drop_last: false
+
+training:
+  epochs: 200
+  learning_rate: 1.0e-4
+  bf16: false
+

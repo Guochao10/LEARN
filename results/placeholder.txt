@@ -1,1 +1,0 @@
-Download models and put them inside this folder.

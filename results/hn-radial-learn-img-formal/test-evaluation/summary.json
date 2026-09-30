@@ -1,0 +1,98 @@
+{
+  "checkpoint": "/data/home/gcjiang3/qsm/LEARN/results/hn-radial-learn-img-formal/best-loss.pt",
+  "checkpoint_epoch": 12,
+  "split": "test",
+  "normalization": "middle_slice_all_echoes",
+  "metric_note": "Complex MSE uses the training mask; magnitude PSNR uses fixed peak 1 on normalized data; SNR is target/error norm.",
+  "overall": {
+    "input_complex_mse": 0.4661886982241413,
+    "prediction_complex_mse": 0.35816755617270246,
+    "input_psnr_db": 6.576655950862914,
+    "prediction_psnr_db": 6.0381498924922195,
+    "input_snr_db": 13.936972805857659,
+    "prediction_snr_db": 13.398477073013783,
+    "pairs": 10,
+    "slices": 640
+  },
+  "by_subject": [
+    {
+      "subject": "sub-09",
+      "pairs": 5,
+      "slices": 320,
+      "input_complex_mse": 0.6498709301464259,
+      "prediction_complex_mse": 0.4758612952195108,
+      "input_psnr_db": 4.048697315342724,
+      "prediction_psnr_db": 4.82879617428407,
+      "input_snr_db": 12.190700154006482,
+      "prediction_snr_db": 12.97081025838852
+    },
+    {
+      "subject": "sub-10",
+      "pairs": 5,
+      "slices": 320,
+      "input_complex_mse": 0.28250646630185655,
+      "prediction_complex_mse": 0.24047381712589413,
+      "input_psnr_db": 9.104614586383104,
+      "prediction_psnr_db": 7.2475036107003685,
+      "input_snr_db": 15.683245457708836,
+      "prediction_snr_db": 13.826143887639045
+    }
+  ],
+  "by_motion_case": [
+    {
+      "motion_case": "m01",
+      "pairs": 2,
+      "slices": 128,
+      "input_complex_mse": 0.4956141341244802,
+      "prediction_complex_mse": 0.35389115766156465,
+      "input_psnr_db": 4.430579455103725,
+      "prediction_psnr_db": 5.888666300103068,
+      "input_snr_db": 11.721006952226162,
+      "prediction_snr_db": 13.17907428741455
+    },
+    {
+      "motion_case": "m02",
+      "pairs": 2,
+      "slices": 128,
+      "input_complex_mse": 0.1687942478893092,
+      "prediction_complex_mse": 0.30665342486463487,
+      "input_psnr_db": 12.983466940000653,
+      "prediction_psnr_db": 5.515464691445231,
+      "input_snr_db": 20.602435879409313,
+      "prediction_snr_db": 13.134460002183914
+    },
+    {
+      "motion_case": "m03",
+      "pairs": 2,
+      "slices": 128,
+      "input_complex_mse": 0.8280314148869365,
+      "prediction_complex_mse": 0.5407265513204038,
+      "input_psnr_db": 5.116395209915936,
+      "prediction_psnr_db": 4.624454364879057,
+      "input_snr_db": 12.6918024122715,
+      "prediction_snr_db": 12.199845299124718
+    },
+    {
+      "motion_case": "m04",
+      "pairs": 2,
+      "slices": 128,
+      "input_complex_mse": 0.3094402779242955,
+      "prediction_complex_mse": 0.19268911244580522,
+      "input_psnr_db": 5.349662451073527,
+      "prediction_psnr_db": 7.943683484569192,
+      "input_snr_db": 12.28871402144432,
+      "prediction_snr_db": 14.882760368287563
+    },
+    {
+      "motion_case": "m05",
+      "pairs": 2,
+      "slices": 128,
+      "input_complex_mse": 0.5290634162956849,
+      "prediction_complex_mse": 0.39687753457110375,
+      "input_psnr_db": 5.00317569822073,
+      "prediction_psnr_db": 6.2184806214645505,
+      "input_snr_db": 12.380904763936996,
+      "prediction_snr_db": 13.596245408058167
+    }
+  ]
+}

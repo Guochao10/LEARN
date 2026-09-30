@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-train = ["tensorboard>=2.14"]
+train = ["tensorboard>=2.14", "matplotlib>=3.8"]
 test = ["pytest>=7.4"]
 
 [tool.setuptools.packages.find]
@@ -28,4 +28,3 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
-

@@ -16,6 +16,7 @@ def save_checkpoint(
     epoch: int,
     config: dict[str, Any],
     best_metric: float | None = None,
+    extra: dict[str, Any] | None = None,
 ) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -26,7 +27,11 @@ def save_checkpoint(
         "config": {key: value for key, value in config.items() if not key.startswith("_")},
         "best_metric": best_metric,
     }
-    torch.save(payload, path)
+    if extra:
+        payload.update(extra)
+    temporary = path.with_name(path.name + ".tmp")
+    torch.save(payload, temporary)
+    temporary.replace(path)
 
 
 def load_checkpoint(
@@ -40,4 +45,3 @@ def load_checkpoint(
     if optimizer is not None and payload.get("optimizer") is not None:
         optimizer.load_state_dict(payload["optimizer"])
     return payload
-

@@ -1,0 +1,37 @@
+# Initial single-GPU correctness run on paired HN Repeatability Radial data.
+
+# 用 HN Repeatability 数据集进行训练.
+
+seed: 0
+deterministic: false
+output_dir: results/hn-radial-learn-img
+
+model:
+  in_channels: 2
+  out_channels: 2
+  base_channels: 32
+  convs_per_level: 3
+  num_levels: 4
+  kernel_size: 3
+  output_relu: false
+  residual: false
+
+data:
+  format: h5
+  root: /data1/gcjiang3/generated/HNRepeatability_RadialMotion_v1
+  # Zero-based Python slice [112:176] = anatomical slices 113 through 176.
+  slice_range: [112, 176]
+  normalization: middle_slice_all_echoes
+  use_brain_mask: false
+
+loader:
+  batch_size: 1
+  num_workers: 0
+  pin_memory: true
+  persistent_workers: false
+  drop_last: false
+
+training:
+  epochs: 5
+  learning_rate: 1.0e-4
+  bf16: false

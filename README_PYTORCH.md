@@ -1,7 +1,7 @@
 # LEARN-IMG PyTorch migration
 
-This branch keeps the original TensorFlow implementation under `codes/` and
-adds a modern PyTorch implementation under `src/learn_motion/`.
+The original TensorFlow implementation is archived under `legacy_tf/codes/`.
+The maintained PyTorch implementation is under `src/learn_motion/`.
 
 ## Scientific tensor convention
 
@@ -25,7 +25,7 @@ local CUDA driver using the official PyTorch installation selector. Then run:
 python -m pip install -e ".[train,test]"
 ```
 
-Do not install the original `learn_env.yml` for this implementation; it pins
+Do not install the original `legacy_tf/learn_env.yml` for this implementation; it pins
 Python 3.6 and TensorFlow 1.13.
 
 ## Data-independent verification
@@ -55,6 +55,20 @@ Review `configs/learn_img_original.yaml` and adjust the filename glob if the
 downloaded archive uses a different suffix.
 
 ## Training
+
+For the paired HN Radial HDF5 dataset, use
+`configs/hn_radial_learn_img.yaml`. Its loader reads the dataset manifest and
+selects Python slices `[112:176]` without copying or cropping the source files.
+
+For a fresh, longer run use `configs/hn_radial_learn_img_formal.yaml` and follow
+[`docs/正式训练.md`](docs/正式训练.md). This uses a separate output directory and
+selects `best-loss.pt` by validation complex MSE.
+
+```bash
+python scripts/train_learn_img.py --config configs/hn_radial_learn_img.yaml --device cuda:0
+```
+
+The MATLAB example-data configuration remains available:
 
 ```powershell
 python scripts/train_learn_img.py --config configs/learn_img_original.yaml
@@ -89,9 +103,7 @@ volumes for downstream QSM processing.
 - conversion of the original Keras `.h5` weights;
 - LEARN-BIO and its R2* signal-model loss;
 - DistributedDataParallel and multi-GPU launch scripts;
-- four-echo Radial/ViewMotionQSM data adapters;
 - SSIM parity with the TensorFlow implementation.
 
 These should be added after the PyTorch LEARN-IMG data and training path is
 validated with the author's exemplar dataset.
-

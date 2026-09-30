@@ -76,6 +76,7 @@ class LearnImgUNet(nn.Module):
         num_levels: int = 4,
         kernel_size: int | Sequence[int] = 3,
         output_relu: bool = False,
+        upconv_relu: bool = False,
         residual: bool = False,
     ) -> None:
         super().__init__()
@@ -88,6 +89,7 @@ class LearnImgUNet(nn.Module):
 
         self.num_levels = num_levels
         self.output_relu = output_relu
+        self.upconv_relu = upconv_relu
         self.residual = residual
 
         kernel = _triple(kernel_size)
@@ -199,6 +201,8 @@ class LearnImgUNet(nn.Module):
             strict=True,
         ):
             tensor = upconv(tensor)
+            if self.upconv_relu:
+                tensor = torch.relu(tensor)
             if tensor.shape[2:] != skip.shape[2:]:
                 raise RuntimeError(
                     "decoder/encoder shape mismatch: "
@@ -211,4 +215,3 @@ class LearnImgUNet(nn.Module):
         if self.residual:
             tensor = original - tensor
         return tensor
-

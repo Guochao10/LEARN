@@ -5,6 +5,18 @@
 
 /results/*
 !/results/*.txt
+!/results/hn-radial-learn-img-formal/
+!/results/hn-radial-learn-img-formal/best-validation.png
+!/results/hn-radial-learn-img-formal/history.jsonl
+!/results/hn-radial-learn-img-formal/test-evaluation/
+!/results/hn-radial-learn-img-formal/test-evaluation/summary.json
+!/results/hn-radial-learn-img-formal/test-evaluation/per_pair.csv
+!/results/hn-radial-learn-img-formal/test-evaluation/per_slice.csv
+!/results/hn-radial-learn-img-formal/test-evaluation/previews/
+!/results/hn-radial-learn-img-formal/test-evaluation/previews/*.png
+
+/legacy_tf/data/*
+/legacy_tf/results/*
 
 /**/*.pyc
 /**/__pycache__
@@ -19,3 +31,5 @@
 *.pth
 *.ckpt
 *.h5
+
+/results/hn-radial-learn-img-formal/test-inference/

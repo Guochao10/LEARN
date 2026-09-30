@@ -1,4 +1,7 @@
 # PyTorch reproduction of the original LEARN-IMG configuration.
+
+# 对原始论文结果的复现, 使用作者的 MATLAB 示例数据, 训练 200 epochs.
+
 seed: 0
 deterministic: false
 output_dir: results/pytorch-learn-img

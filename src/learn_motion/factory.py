@@ -7,6 +7,7 @@ from typing import Any
 
 from torch.utils.data import DataLoader
 
+from .data.h5_dataset import LearnImgH5Dataset
 from .data.learn_img_dataset import LearnImgMatDataset
 from .models.learn_img import LearnImgUNet
 
@@ -21,12 +22,25 @@ def build_learn_img_model(config: dict[str, Any]) -> LearnImgUNet:
         num_levels=int(model_config.get("num_levels", 4)),
         kernel_size=model_config.get("kernel_size", 3),
         output_relu=bool(model_config.get("output_relu", False)),
+        upconv_relu=bool(model_config.get("upconv_relu", False)),
         residual=bool(model_config.get("residual", False)),
     )
 
 
-def build_dataset(config: dict[str, Any], split: str) -> LearnImgMatDataset:
+def build_dataset(config: dict[str, Any], split: str) -> LearnImgMatDataset | LearnImgH5Dataset:
     data_config = config["data"]
+    data_format = data_config.get("format", "mat")
+    if data_format == "h5":
+        return LearnImgH5Dataset(
+            root=Path(data_config["root"]),
+            split=split,
+            slice_range=tuple(data_config.get("slice_range", (112, 176))),
+            normalization=str(data_config.get("normalization", "middle_slice_all_echoes")),
+            shared_input_scale=bool(data_config.get("shared_input_scale", False)),
+            use_brain_mask=bool(data_config.get("use_brain_mask", False)),
+        )
+    if data_format != "mat":
+        raise ValueError(f"unknown data format: {data_format}")
     split_config = data_config["splits"][split]
     return LearnImgMatDataset(
         root=Path(data_config["root"]),
@@ -42,7 +56,7 @@ def build_dataset(config: dict[str, Any], split: str) -> LearnImgMatDataset:
 
 
 def build_loader(
-    dataset: LearnImgMatDataset,
+    dataset: LearnImgMatDataset | LearnImgH5Dataset,
     config: dict[str, Any],
     split: str,
 ) -> DataLoader:
@@ -58,4 +72,3 @@ def build_loader(
         and int(loader_config.get("num_workers", 0)) > 0,
         drop_last=training and bool(loader_config.get("drop_last", False)),
     )
-

@@ -1,0 +1,46 @@
+# Residual correction experiment; trained from scratch, separate from the formal baseline.
+seed: 0
+deterministic: false
+output_dir: results/hn-radial-learn-img-residual
+
+model:
+  in_channels: 2
+  out_channels: 2
+  base_channels: 32
+  convs_per_level: 3
+  num_levels: 4
+  kernel_size: 3
+  output_relu: false
+  upconv_relu: true
+  residual: true
+
+data:
+  format: h5
+  root: /data1/gcjiang3/generated/HNRepeatability_RadialMotion_v1
+  slice_range: [112, 176]
+  normalization: middle_slice_all_echoes
+  shared_input_scale: true
+  use_brain_mask: false
+
+loader:
+  batch_size: 1
+  num_workers: 2
+  pin_memory: true
+  persistent_workers: true
+  drop_last: false
+
+training:
+  epochs: 150
+  learning_rate: 1.0e-4
+  bf16: false
+  monitor: loss
+  scheduler:
+    factor: 0.5
+    patience: 8
+    min_lr: 1.0e-6
+  early_stopping_patience: 25
+
+validation_preview:
+  pair_id: sub-08_ses-01_m01_rl_step_moderate_seed10801
+  slice_index: 140
+  echo_index: 0

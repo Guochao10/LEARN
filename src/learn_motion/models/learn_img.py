@@ -168,6 +168,9 @@ class LearnImgUNet(nn.Module):
                 nn.init.xavier_uniform_(module.weight)
                 if module.bias is not None:
                     nn.init.zeros_(module.bias)
+        if self.residual:
+            nn.init.zeros_(self.output_conv.weight)
+            nn.init.zeros_(self.output_conv.bias)
 
     def _validate_input(self, tensor: torch.Tensor) -> None:
         if tensor.ndim != 5:

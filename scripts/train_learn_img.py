@@ -29,7 +29,12 @@ def parse_args() -> argparse.Namespace:
 
 
 def masked_mse(prediction: torch.Tensor, target: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
-    return F.mse_loss(prediction.float() * mask, target * mask)
+    prediction = prediction.float()
+    target = target.float()
+    mask = mask.float()
+    squared_error = (prediction - target).square() * mask
+    denominator = mask.expand_as(squared_error).sum().clamp_min(1.0)
+    return squared_error.sum() / denominator
 
 
 def amp_context(device: torch.device, use_bf16: bool):

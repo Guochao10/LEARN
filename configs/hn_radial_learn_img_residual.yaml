@@ -1,4 +1,7 @@
 # Residual correction experiment; trained from scratch, separate from the formal baseline.
+
+# 开启残差.
+
 seed: 0
 deterministic: false
 output_dir: results/hn-radial-learn-img-residual

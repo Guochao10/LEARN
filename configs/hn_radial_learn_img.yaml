@@ -1,6 +1,7 @@
 # Initial single-GPU correctness run on paired HN Repeatability Radial data.
 
 # 用 HN Repeatability 数据集进行训练.
+# 这是基础的版本, 通道数32, 只训练5个epoch, 用于跑通测试流程.
 
 seed: 0
 deterministic: false

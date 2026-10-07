@@ -1,4 +1,7 @@
 # Fresh LEARN-IMG training on HN Radial pairs. Do not point this at pilot outputs.
+
+# 不使用残差和脑mask的正式实验.
+
 seed: 0
 deterministic: false
 output_dir: results/hn-radial-learn-img-formal

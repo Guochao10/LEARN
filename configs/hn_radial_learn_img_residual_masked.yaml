@@ -1,5 +1,8 @@
 # Residual correction with brain-region-normalized loss.
 # This is a separate experiment; it does not reuse the residual experiment output.
+
+# 加入脑mask.
+
 seed: 0
 deterministic: false
 output_dir: results/hn-radial-learn-img-residual-masked

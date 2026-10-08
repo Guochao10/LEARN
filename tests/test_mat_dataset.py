@@ -3,7 +3,8 @@ from pathlib import Path
 import numpy as np
 from scipy.io import savemat
 
-from learn_motion.data.learn_img_dataset import LearnImgMatDataset
+from learn_motion.data.mat_dataset import LearnImgMatDataset
+from learn_motion.factory import build_dataset
 
 
 def test_dataset_reads_matlab_volume_and_preserves_axes(tmp_path: Path) -> None:
@@ -34,3 +35,15 @@ def test_dataset_reads_matlab_volume_and_preserves_axes(tmp_path: Path) -> None:
     np.testing.assert_allclose(recovered.transpose(1, 2, 0), motion[:, :, 1, :], atol=1e-6)
     assert sample["slice_index"] == 1
     assert sample["original_width"] == 6
+
+    config = {
+        "data": {
+            "format": "mat",
+            "root": str(tmp_path),
+            "splits": {"train": {"subjects": [subject],
+                                  "motion_pattern": "motion/{subject}/ima_comb_{subject}_*.mat"}},
+            "normalization": "none",
+            "pad_width_190_to_192": False,
+        },
+    }
+    assert isinstance(build_dataset(config, "train"), LearnImgMatDataset)

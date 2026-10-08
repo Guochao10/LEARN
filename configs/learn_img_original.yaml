@@ -17,6 +17,7 @@ model:
   residual: false
 
 data:
+  format: mat
   root: data
   mat_key: ima_comb
   normalization: middle_slice_all_echoes

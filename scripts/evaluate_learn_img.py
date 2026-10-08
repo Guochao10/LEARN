@@ -27,6 +27,7 @@ METRICS = (
 IDENTIFIERS = ("pair_id", "subject", "motion_case")
 
 
+# 读取配置, 权重, 输出目录和测试集预览图的命令行选项.
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", required=True)
@@ -38,8 +39,10 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+# 比较单张切片的输入和预测, 分别计算复数 MSE, 幅值 PSNR 和幅值 SNR.
 def sample_metrics(input_image: torch.Tensor, prediction: torch.Tensor,
                    reference: torch.Tensor, mask: torch.Tensor) -> dict[str, float]:
+    # 先应用掩膜再按整幅图像的元素数求均值, 与训练损失的归一化口径不同.
     def complex_mse(image: torch.Tensor) -> float:
         return F.mse_loss(image.float() * mask, reference * mask).item()
 
@@ -53,10 +56,12 @@ def sample_metrics(input_image: torch.Tensor, prediction: torch.Tensor,
     }
 
 
+# 对多条切片或案例记录中的六项指标分别取算术平均.
 def mean_metrics(rows: list[dict]) -> dict[str, float]:
     return {name: float(np.mean([row[name] for row in rows])) for name in METRICS}
 
 
+# 按受试者或运动类型汇总案例均值, 同时统计案例数和切片数.
 def summarize(rows: list[dict], key: str) -> list[dict]:
     groups: dict[str, list[dict]] = defaultdict(list)
     for row in rows:
@@ -65,6 +70,7 @@ def summarize(rows: list[dict], key: str) -> list[dict]:
              **mean_metrics(group)} for value, group in sorted(groups.items())]
 
 
+# 按指定列顺序保存逐切片或逐案例的指标表.
 def save_csv(path: Path, rows: list[dict], columns: tuple[str, ...]) -> None:
     with path.open("w", encoding="utf-8", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=columns, extrasaction="ignore")
@@ -72,6 +78,7 @@ def save_csv(path: Path, rows: list[dict], columns: tuple[str, ...]) -> None:
         writer.writerows(rows)
 
 
+# 为一个测试案例的指定切片生成四回波输入, 预测和参考图像对比图.
 def save_preview(path: Path, images: tuple[torch.Tensor, torch.Tensor, torch.Tensor],
                  pair_id: str, slice_number: int) -> None:
     import matplotlib
@@ -83,6 +90,7 @@ def save_preview(path: Path, images: tuple[torch.Tensor, torch.Tensor, torch.Ten
     echoes = arrays[0].shape[1]
     fig, axes = plt.subplots(echoes, 3, figsize=(10, 3 * echoes), squeeze=False,
                              constrained_layout=True)
+    # 每个回波独立取参考图像的显示上限, 同一行三列共用该灰度范围.
     for echo in range(echoes):
         reference_magnitude = np.hypot(arrays[2][0, echo], arrays[2][1, echo])
         limit = float(np.percentile(reference_magnitude, 99.5))
@@ -97,9 +105,11 @@ def save_preview(path: Path, images: tuple[torch.Tensor, torch.Tensor, torch.Ten
     plt.close(fig)
 
 
+# 在测试集上一次完成推理, 指标计算, 汇总报告和预览图保存.
 def main() -> None:
     args = parse_args()
     config = load_config(args.config)
+    # 输入与参考须共享归一化尺度, 才能直接比较当前配对 HDF5 数据.
     if config["data"].get("format") != "h5" or not config["data"].get("shared_input_scale"):
         raise ValueError("evaluation requires paired HDF5 data with shared_input_scale: true")
     dataset = build_dataset(config, "test")
@@ -109,11 +119,13 @@ def main() -> None:
     device = torch.device(args.device)
     model = build_learn_img_model(config).to(device)
     checkpoint = load_checkpoint(args.checkpoint, model, map_location=device)
+    # 核对权重对应的模型和数据设置, 避免用不匹配的配置评估.
     for section in ("model", "data"):
         if checkpoint["config"].get(section) != config.get(section):
             raise ValueError(f"checkpoint and evaluation config differ in {section}")
     model.eval()
 
+    # 拒绝覆盖非空结果目录; 不需要预览图时也不创建 previews 目录.
     output_dir = args.output_dir or Path(config["output_dir"]) / "test-evaluation"
     if output_dir.exists() and any(output_dir.iterdir()):
         raise FileExistsError(f"evaluation output directory is not empty: {output_dir}")
@@ -122,6 +134,7 @@ def main() -> None:
     if not args.no_previews:
         preview_dir.mkdir()
 
+    # 逐批推理后立即计算每张切片的指标, 不保存中间预测体数据.
     rows: list[dict] = []
     with torch.inference_mode():
         for batch in tqdm(loader, desc="evaluate test"):
@@ -135,6 +148,7 @@ def main() -> None:
                 row = {**identifiers, "slice_number": slice_index + 1,
                        **sample_metrics(inputs[i], predictions[i], targets[i], masks[i])}
                 rows.append(row)
+                # 指定解剖层号时, 为每个测试案例保存一张四回波对比图.
                 if not args.no_previews and slice_index + 1 == args.preview_slice:
                     save_preview(preview_dir / f"{identifiers['pair_id']}_slice{args.preview_slice}.png",
                                  (inputs[i], predictions[i], targets[i]),
@@ -142,11 +156,13 @@ def main() -> None:
 
     if not rows:
         raise ValueError("test dataset is empty")
+    # 先求每个案例的切片均值, 再对案例均值按受试者和运动类型分组.
     per_pair = [{**{key: group[0][key] for key in IDENTIFIERS}, "slices": len(group),
                  **mean_metrics(group)}
                 for _, group in sorted(_group_rows(rows, "pair_id").items())]
     per_subject = summarize(per_pair, "subject")
     per_motion = summarize(per_pair, "motion_case")
+    # 总体指标对每个案例等权平均, 并附上案例数和切片数.
     overall = mean_metrics(per_pair)
     overall["pairs"] = len(per_pair)
     overall["slices"] = len(rows)
@@ -160,6 +176,7 @@ def main() -> None:
         "by_subject": per_subject,
         "by_motion_case": per_motion,
     }
+    # 保存逐切片, 逐案例和汇总报告, 再打印总体复数 MSE 的相对变化.
     save_csv(output_dir / "per_slice.csv", rows,
              (*IDENTIFIERS, "slice_number", *METRICS))
     save_csv(output_dir / "per_pair.csv", per_pair,
@@ -174,6 +191,7 @@ def main() -> None:
     print(f"saved {output_dir / 'summary.json'} and CSV reports")
 
 
+# 将逐切片记录按 pair_id 等字段分组, 供案例均值计算使用.
 def _group_rows(rows: list[dict], key: str) -> dict[str, list[dict]]:
     groups: dict[str, list[dict]] = defaultdict(list)
     for row in rows:

@@ -1,4 +1,4 @@
-"""PyTorch Dataset for paired motion-corrupted/motion-free mGRE slices."""
+"""MAT-backed dataset for paired motion-corrupted/motion-free mGRE slices."""
 
 from __future__ import annotations
 

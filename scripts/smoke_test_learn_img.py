@@ -1,5 +1,7 @@
 """Run a data-independent LEARN-IMG forward/backward/checkpoint test."""
 
+# 用随机数据快速检查模型前向, 反向更新和checkpoint保存和读取.
+
 from __future__ import annotations
 
 import argparse

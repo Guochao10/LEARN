@@ -1,7 +1,7 @@
 """Data loading and complex-valued preprocessing."""
 
 from .complex import channels_to_complex, complex_to_channels
-from .learn_img_dataset import LearnImgMatDataset
+from .h5_dataset import LearnImgH5Dataset
+from .mat_dataset import LearnImgMatDataset
 
-__all__ = ["LearnImgMatDataset", "channels_to_complex", "complex_to_channels"]
-
+__all__ = ["LearnImgH5Dataset", "LearnImgMatDataset", "channels_to_complex", "complex_to_channels"]

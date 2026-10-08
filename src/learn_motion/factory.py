@@ -1,4 +1,4 @@
-"""Factories shared by training and inference commands."""
+"""Factories shared by training and evaluation commands."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import Any
 from torch.utils.data import DataLoader
 
 from .data.h5_dataset import LearnImgH5Dataset
-from .data.learn_img_dataset import LearnImgMatDataset
+from .data.mat_dataset import LearnImgMatDataset
 from .models.learn_img import LearnImgUNet
 
 
@@ -29,7 +29,9 @@ def build_learn_img_model(config: dict[str, Any]) -> LearnImgUNet:
 
 def build_dataset(config: dict[str, Any], split: str) -> LearnImgMatDataset | LearnImgH5Dataset:
     data_config = config["data"]
-    data_format = data_config.get("format", "mat")
+    if "format" not in data_config:
+        raise ValueError("data.format is required; choose 'h5' or 'mat'")
+    data_format = data_config["format"]
     if data_format == "h5":
         return LearnImgH5Dataset(
             root=Path(data_config["root"]),

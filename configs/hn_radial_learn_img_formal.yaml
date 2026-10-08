@@ -45,6 +45,7 @@ training:
     min_lr: 1.0e-6
   early_stopping_patience: 25 # 连续25个epoch无改善就停止训练.
 
+# 选取验证集 sub-08 的指定运动案例, Python 索引为140的切片画对比图.
 validation_preview:
   pair_id: sub-08_ses-01_m01_rl_step_moderate_seed10801
   slice_index: 140 # Anatomical slice 141.

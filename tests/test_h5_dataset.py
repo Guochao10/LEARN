@@ -70,6 +70,8 @@ def test_manifest_h5_pairs_and_slice_selection(tmp_path: Path) -> None:
         "data": {"format": "h5", "root": str(tmp_path), "slice_range": [2, 4]},
         "loader": {"batch_size": 1, "num_workers": 0},
     }
+    with pytest.raises(ValueError, match="data.format is required"):
+        build_dataset({"data": {"root": str(tmp_path)}}, "train")
     assert len(build_dataset(config, "train")) == 2
     batch = next(iter(build_loader(build_dataset(config, "train"), config, "train")))
     assert tuple(batch["input"].shape) == (1, 2, 4, 8, 8)

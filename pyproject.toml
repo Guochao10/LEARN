@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "learn-motion-pytorch"
 version = "0.1.0"
 description = "Modern PyTorch implementation of LEARN-IMG for multi-echo GRE motion correction"
-readme = "README_PYTORCH.md"
+readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 dependencies = [
